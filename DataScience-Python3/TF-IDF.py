@@ -7,7 +7,7 @@ conf = SparkConf().setMaster("local").setAppName("SparkTFIDF")
 sc = SparkContext(conf = conf)
 
 # Load documents (one per line).
-rawData = sc.textFile("e:/sundog-consult/Udemy/DataScience/subset-small.tsv")
+rawData = sc.textFile("C:/Users/Bertrand.Marechal/Documents/Projects/GitHubBertrand/Udemy-ML-DL/DataScience-Python3/subset-small.tsv")
 fields = rawData.map(lambda x: x.split("\t"))
 documents = fields.map(lambda x: x[3].split(" "))
 
@@ -46,4 +46,20 @@ zippedResults = gettysburgRelevance.zip(documentNames)
 
 # And, print the document with the maximum TF*IDF value:
 print("Best document for Gettysburg is:")
+print(zippedResults.max())
+
+
+
+fireTF = hashingTF.transform(["fire"])
+fireHashValue = int(fireTF.indices[0])
+
+# Now we will extract the TF*IDF score for Gettsyburg's hash value into
+# a new RDD for each document:
+fireRelevance = tfidf.map(lambda x: x[fireHashValue])
+
+# We'll zip in the document names so we can see which is which:
+zippedResults = fireRelevance.zip(documentNames)
+
+# And, print the document with the maximum TF*IDF value:
+print("Best document for fire is:")
 print(zippedResults.max())
