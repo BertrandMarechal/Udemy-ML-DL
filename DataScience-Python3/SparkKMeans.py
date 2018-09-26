@@ -4,7 +4,7 @@ from math import sqrt
 from pyspark import SparkConf, SparkContext
 from sklearn.preprocessing import scale
 
-K = 5
+K = 10
 
 # Boilerplate Spark stuff:
 conf = SparkConf().setMaster("local").setAppName("SparkKMeans")
@@ -31,6 +31,7 @@ clusters = KMeans.train(data, K, maxIterations=10,
         runs=10, initializationMode="random")
 
 # Print out the cluster assignments
+# Cache the data if you are going to reuse the RDD
 resultRDD = data.map(lambda point: clusters.predict(point)).cache()
 
 print("Counts by value:")
@@ -43,6 +44,7 @@ print(results)
 
 
 # Evaluate clustering by computing Within Set Sum of Squared Errors
+# Distance from each point to the centroid of its sector
 def error(point):
     center = clusters.centers[clusters.predict(point)]
     return sqrt(sum([x**2 for x in (point - center)]))
